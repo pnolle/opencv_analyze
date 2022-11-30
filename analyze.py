@@ -4,16 +4,15 @@ import cv2
 snipsignsize = [300, 300]
 
 # landscape
-# image_filename = './images/2022 11 12 - Snippet Upper Laser @ Hopla -02358.jpg'
+image_filename = './images/2022 11 12 - Snippet Upper Laser @ Hopla -02358.jpg'
 
 #portrait
-image_filename = './images/2022 11 12 - Snippet Upper Laser @ Hopla -02546.jpg'
+# image_filename = './images/2022 11 12 - Snippet Upper Laser @ Hopla -02546.jpg'
 
 # To read image from disk, we use
 # cv2.imread function, in below method,
 img = cv2.imread(image_filename, cv2.IMREAD_COLOR)
 imgshape = img.shape
-print (imgshape, imgshape[0], imgshape[1])
 
 if imgshape[0] <= imgshape[1]:
     factor = snipsignsize[0]/imgshape[0]
@@ -22,10 +21,23 @@ else:
     
 imgshape0 = int(imgshape[0]*factor)
 imgshape1 = int(imgshape[1]*factor)
-print (imgshape, factor, imgshape0, imgshape1)
-snipsignsized = cv2.resize(img, (imgshape1, imgshape0))
+resized = cv2.resize(img, (imgshape1, imgshape0))
+imgshape = resized.shape
 
-crop = img[50:180, 100:300]
+start0 = 0
+start1 = 0
+end0 = snipsignsize[0]
+end1 = snipsignsize[1]
+if imgshape[0] < imgshape[1]:
+    half = (imgshape[1]-imgshape[0])/2
+    start1 = int(half)
+    end1 = int(imgshape[1]-half)
+elif imgshape[0] > imgshape[1]:
+    half = (imgshape[0]-imgshape[1])/2
+    start0 = int(half)
+    end0 = int(imgshape[0]-half)
+
+crop = resized[start0:end0, start1:end1]
 
 b,g,r = (img[50, 50])
 print (r)
@@ -36,8 +48,8 @@ print (b)
 # first Parameter is windows title (should be in string format)
 # Second Parameter is image array
 cv2.imshow("image", img)
-# cv2.imshow("crop", crop)
-cv2.imshow("snipsignsized", snipsignsized)
+cv2.imshow("resized", resized)
+cv2.imshow("crop", crop)
 
 # To hold the window on screen, we use cv2.waitKey method
 # Once it detected the close input, it will release the control
