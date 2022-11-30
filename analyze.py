@@ -1,17 +1,36 @@
 # Python code to read image
 import cv2
+import json
+from json import JSONEncoder
+import numpy
 
+
+# ### SETTINGS ###
 snipsignsize = [300, 300]
 
 # landscape
-image_filename = './images/2022 11 12 - Snippet Upper Laser @ Hopla -02358.jpg'
+image_path = './images/'
+image_filename = '2022 11 12 - Snippet Upper Laser @ Hopla -02358.jpg'
+image_path_name = image_path + image_filename
 
 #portrait
-# image_filename = './images/2022 11 12 - Snippet Upper Laser @ Hopla -02546.jpg'
+# image_path_name = './images/2022 11 12 - Snippet Upper Laser @ Hopla -02546.jpg'
+
+
+# ### HELPERS ###
+class NumpyArrayEncoder(JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, numpy.ndarray):
+            return obj.tolist()
+        return JSONEncoder.default(self, obj)
+    
+    
+    
+# ### MAIN ###
 
 # To read image from disk, we use
 # cv2.imread function, in below method,
-img = cv2.imread(image_filename, cv2.IMREAD_COLOR)
+img = cv2.imread(image_path_name, cv2.IMREAD_COLOR)
 imgshape = img.shape
 
 if imgshape[0] <= imgshape[1]:
@@ -39,10 +58,20 @@ elif imgshape[0] > imgshape[1]:
 
 crop = resized[start0:end0, start1:end1]
 
-b,g,r = (img[50, 50])
+b,g,r = (crop[50, 50])
 print (r)
 print (g)
 print (b)
+
+encodedNumpyData = json.dumps(crop, cls=NumpyArrayEncoder)  # use dump() to write array into file
+print("Printing JSON serialized NumPy array")
+# print(encodedNumpyData)
+# [print(i) for i in crop]
+
+file1 = open('./dumps/' + image_filename + '.json', 'w')
+file1.write(encodedNumpyData)
+file1.close()
+
 
 # Creating GUI window to display an image on screen
 # first Parameter is windows title (should be in string format)
