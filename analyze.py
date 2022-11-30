@@ -65,25 +65,33 @@ crop = resized[start0:end0, start1:end1]
 # print (g)
 # print (b)
 
-previous_pixel = crop[0][0]
-eq_pix_cnt = 0
-pix_cnt = 0
-for i in range(len(crop)):
-    for j in range(len(crop[i])):
-        pix_cnt += 1
-        if (numpy.array_equal(previous_pixel, crop[i][j])):
-            eq_pix_cnt += 1
-            print('equal pixel %d/%d found' %(eq_pix_cnt, pix_cnt))
-            # print('equal pixel %d/%d found' %(eq_pix_cnt) %(pix_cnt)) #, crop[i][j])
-        previous_pixel = crop[i][j]
-        # print('j',j, crop[i][j])
+# previous_pixel = crop[0][0]
+# eq_pix_cnt = 0
+# pix_cnt = 0
+# for i in range(len(crop)):
+#     for j in range(len(crop[i])):
+#         pix_cnt += 1
+#         if (numpy.array_equal(previous_pixel, crop[i][j])):
+#             eq_pix_cnt += 1
+#             print('equal pixel %d/%d found' %(eq_pix_cnt, pix_cnt))
+#             # print('equal pixel %d/%d found' %(eq_pix_cnt) %(pix_cnt)) #, crop[i][j])
+#         previous_pixel = crop[i][j]
+#         # print('j',j, crop[i][j])
 
-encodedNumpyData = json.dumps(crop, cls=NumpyArrayEncoder)  # use dump() to write array into file
-print("Printing JSON serialized NumPy array")
-print(len(encodedNumpyData))
+encodedNumpyData = json.dumps(crop, cls=NumpyArrayEncoder).replace(" ", "")  # use dump() to write array into file
+print('json len', len(encodedNumpyData))
 
-file1 = open('./dumps/' + image_filename + '.json', 'w')
-file1.write(encodedNumpyData)
+bNumpyData = bytes(encodedNumpyData, 'utf-8')
+b64NumpyData = base64.b64encode(bNumpyData)
+zlibNumpyData = zlib.compress(b64NumpyData)
+print('zlib len', len(zlibNumpyData))
+
+# compressed = 'eJwdktkNgDAMQxfqR+5j/8V4QUJQUttx3Nrzl0+f+uunPPpm+Tf3Z/tKX1DM5bXP+wUFA777bCob4HMRfUk14QwfDYPrrA5gcuQB49lQQxdZpdr+1oN2bEA3pW5Nf8NGOFsR19NBszyX7G2raQpkVUEBdbTLuwSRlcDCYiW7GeBaRYJrgImrM3lmI/WsIxFXNd+aszXoRXuZ1PnZRdwKJeqYYYKq6y1++PXOYdgM0TlZcymCOdKqR7HYmYPiRslDr2Sn6C0Wgw+a6MakM2VnBk6HwU6uWqDRz+p6wtKTCg2WsfdKJwfJlHNaFT4+Q7PGfR9hyWK3p3464nhFwpOd7kdvjmz1jpWcxmbG/FJUXdMZgrpzs+jxC11twrBo3TaNgvsf8oqIYwT4r9XkPnNC1XcP7qD5cW7UHSJZ3my5qba+ozncl5kz8gGEEYOQ'
+# data = zlib.decompress(base64.b64decode(compressed))
+
+file1 = open('./dumps/' + image_filename + '.b64.zlib', 'wb')
+# file1.write(encodedNumpyData)
+file1.write(zlibNumpyData)
 file1.close()
 
 
