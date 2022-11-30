@@ -3,8 +3,11 @@ import cv2
 
 snipsignsize = [300, 300]
 
-image_filename = './images/2022 11 12 - Snippet Upper Laser @ Hopla -02358.jpg'
-# image_filename = 'pic23-200x141.png'
+# landscape
+# image_filename = './images/2022 11 12 - Snippet Upper Laser @ Hopla -02358.jpg'
+
+#portrait
+image_filename = './images/2022 11 12 - Snippet Upper Laser @ Hopla -02546.jpg'
 
 # To read image from disk, we use
 # cv2.imread function, in below method,
