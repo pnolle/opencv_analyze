@@ -3,6 +3,8 @@ import cv2
 import json
 from json import JSONEncoder
 import numpy
+import base64
+import zlib
 
 
 # ### SETTINGS ###
@@ -58,15 +60,27 @@ elif imgshape[0] > imgshape[1]:
 
 crop = resized[start0:end0, start1:end1]
 
-b,g,r = (crop[50, 50])
-print (r)
-print (g)
-print (b)
+# b,g,r = (crop[50, 50])
+# print (r)
+# print (g)
+# print (b)
+
+previous_pixel = crop[0][0]
+eq_pix_cnt = 0
+pix_cnt = 0
+for i in range(len(crop)):
+    for j in range(len(crop[i])):
+        pix_cnt += 1
+        if (numpy.array_equal(previous_pixel, crop[i][j])):
+            eq_pix_cnt += 1
+            print('equal pixel %d/%d found' %(eq_pix_cnt, pix_cnt))
+            # print('equal pixel %d/%d found' %(eq_pix_cnt) %(pix_cnt)) #, crop[i][j])
+        previous_pixel = crop[i][j]
+        # print('j',j, crop[i][j])
 
 encodedNumpyData = json.dumps(crop, cls=NumpyArrayEncoder)  # use dump() to write array into file
 print("Printing JSON serialized NumPy array")
-# print(encodedNumpyData)
-# [print(i) for i in crop]
+print(len(encodedNumpyData))
 
 file1 = open('./dumps/' + image_filename + '.json', 'w')
 file1.write(encodedNumpyData)
